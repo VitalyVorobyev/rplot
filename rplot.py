@@ -6,14 +6,15 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.rcParams.update({'font.size': 16})
 
-from readdata import read
+from readpdg import dat_to_json
 from rpredict import rew_v, rewqcd_v
 from datafilter import rfilter
 
+TAUMASS = 1.77682
+
 def tau_xsec(sqrts):
-    mtau = 1.77682
-    mask = sqrts < 2*mtau
-    gamma = 0.5 * sqrts / mtau
+    mask = sqrts < 2*TAUMASS
+    gamma = 0.5 * sqrts / TAUMASS
     gamma[mask] = 1
     beta = np.sqrt(1. - 1./gamma**2)
     coef = 86.8  # nb (4 * pi * alpha**2 / 3)
@@ -31,10 +32,10 @@ def rplot(df, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
             linestyle='none', label=key,
             markersize=5, marker='o')
 
-    sqrts = np.concatenate(
-        [np.linspace(lo, 3.77 - 1.e-5, 20),
-        np.linspace(3.77 + 1.e-5, hi, 20)]
-    )
+    sqrts = np.concatenate([
+        np.linspace(lo, 3.77 - 1.e-5, 20),
+        np.linspace(3.77 + 1.e-5, hi, 20)
+    ])
     ax1.plot(sqrts, rew_v(sqrts**2), '--', color='k', label='EW prediction')
     ax1.plot(sqrts, rewqcd_v(sqrts**2), color='k', label='EW + pQCD prediction')
 
@@ -48,7 +49,7 @@ def rplot(df, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
     ax1.legend(fontsize=14)
 
     ax2 = ax1.twinx()
-    sqrts = np.linspace(2*1.77682, 7, 1000)
+    sqrts = np.linspace(2*TAUMASS, 7, 1000)
     taux = tau_xsec(sqrts)
     ax2.plot(sqrts, taux, label=r'$\sigma(e^+e^-\to\tau^+\tau^-)$')
     ax2.set_ylim((0, 10.5))
@@ -63,7 +64,7 @@ def rplot(df, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
     plt.show()
 
 def main():
-    df = read()
+    df = dat_to_json()
     rplot(df, deltaE=0.02, deltaSigma=2)
 
 if __name__ == '__main__':

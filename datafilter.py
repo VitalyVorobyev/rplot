@@ -8,12 +8,12 @@ def joint_same(r1, r2):
     rjoin = r1.copy()
     rjoin.R = (r1.R * r2.statp**2 + r2.R * r1.statp**2) /\
         (r1.statp**2 + r2.statp**2)
-    rjoin.systp = min(r1.systp, r2.systp)
-    rjoin.systn = min(r1.systn, r2.systn)
+    rjoin.systp = [min(oplus(*r1.systp), oplus(*r2.systp))]
+    rjoin.systn = [min(oplus(*r1.systn), oplus(*r2.systn))]
     rjoin.statp = 1. / oplus(1. / r1.statp, 1. / r2.statp)
     rjoin.statn = 1. / oplus(1. / r1.statn, 1. / r2.statn)
-    rjoin.errp = oplus(rjoin.statp, 0.01*rjoin.R*rjoin.systp, 0.01*rjoin.R*rjoin.norm)
-    rjoin.errn = oplus(rjoin.statn, 0.01*rjoin.R*rjoin.systn, 0.01*rjoin.R*rjoin.norm)
+    rjoin.errp = oplus(rjoin.statp, *rjoin.systp, rjoin.norm)
+    rjoin.errn = oplus(rjoin.statn, *rjoin.systn, rjoin.norm)
     return rjoin
 
 def join_records(r1, r2):
@@ -33,8 +33,8 @@ def join_records(r1, r2):
     rjoin.systn = max(r1.systn, r2.systn)
     rjoin.statp = oplus(d1*r1.statp, d2*r2.statp) / d
     rjoin.statn = oplus(d1*r1.statn, d2*r2.statn) / d
-    rjoin.errp = oplus(rjoin.statp, 0.01 * rjoin.R * rjoin.systp)
-    rjoin.errn = oplus(rjoin.statn, 0.01 * rjoin.R * rjoin.systn)
+    rjoin.errp = oplus(rjoin.statp, *rjoin.systp, rjoin.norm)
+    rjoin.errn = oplus(rjoin.statn, *rjoin.systn, rjoin.norm)
     return rjoin
 
 def rfilter(data, deltaE=0.01, deltaSigma=2):
@@ -73,9 +73,9 @@ def rfilter(data, deltaE=0.01, deltaSigma=2):
     return odata
 
 def main():
-    from readdata import read
+    from readpdg import dat_to_json
 
-    df = read()
+    df = dat_to_json()
     # df = df[df.code == 'OSTERHELD 86']
     df = df[df.code == 'EDWARDS 90']
     print(df.head(11))
