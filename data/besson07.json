@@ -1,10 +1,12 @@
 {
-    "code": "Besson 07",
-    "ref": "Phys. Rev. D 76 (2007) 072008",
-    "doi": "https://doi.org/10.1103/PhysRevD.76.072008",
-    "experiment": "CLEO",
-    "year": 2007,
-    "comment": "",
+    "meta": {
+        "code": "Besson 07",
+        "ref": "Phys. Rev. D 76 (2007) 072008",
+        "doi": "https://doi.org/10.1103/PhysRevD.76.072008",
+        "experiment": "CLEO",
+        "year": 2007,
+        "comment": ""
+    },
     "data": [
         {
             "E": 10.538,

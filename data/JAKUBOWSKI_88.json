@@ -1,0 +1,56 @@
+{
+    "meta": {
+        "year": 1988,
+        "ref": "Zeit. f\u00fcr Physik C 40 (1988) 49",
+        "experiment": "Crystal Ball",
+        "doi": "https://doi.org/10.1007/BF01559717",
+        "comment": "",
+        "code": "Jakubowski 88"
+    },
+    "data": [
+        {
+            "E": 9.39,
+            "dEp": 0.0,
+            "dEn": 0.0,
+            "R": 3.49,
+            "dRp": 0.1681,
+            "dRn": 0.1681,
+            "statp": 0.05,
+            "statn": 0.05,
+            "systp": [
+                0.0
+            ],
+            "systn": [
+                0.0
+            ],
+            "corrp": [
+                0.1605
+            ],
+            "corrn": [
+                0.1605
+            ]
+        },
+        {
+            "E": 9.46,
+            "dEp": 0.0,
+            "dEn": 0.0,
+            "R": 3.47,
+            "dRp": 0.1743,
+            "dRn": 0.1743,
+            "statp": 0.07,
+            "statn": 0.07,
+            "systp": [
+                0.0
+            ],
+            "systn": [
+                0.0
+            ],
+            "corrp": [
+                0.1596
+            ],
+            "corrn": [
+                0.1596
+            ]
+        }
+    ]
+}

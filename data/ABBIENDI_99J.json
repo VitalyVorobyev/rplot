@@ -1,0 +1,34 @@
+{
+    "meta": {
+        "year": 2000,
+        "ref": "Eur. Phys. J. C 13 (2000) 553",
+        "experiment": "OPAL",
+        "doi": "https://doi.org/10.1007/s100520000315",
+        "comment": "",
+        "code": "Abbiendi 00"
+    },
+    "data": [
+        {
+            "E": 188.63,
+            "dEp": 0.0,
+            "dEn": 0.0,
+            "R": 8.34481,
+            "dRp": 0.1659,
+            "dRn": 0.1659,
+            "statp": 0.13933,
+            "statn": 0.13933,
+            "systp": [
+                0.0901
+            ],
+            "systn": [
+                0.0901
+            ],
+            "corrp": [
+                0.0
+            ],
+            "corrn": [
+                0.0
+            ]
+        }
+    ]
+}

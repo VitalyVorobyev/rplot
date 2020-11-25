@@ -1,0 +1,34 @@
+{
+    "meta": {
+        "year": 1997,
+        "ref": "Phys. Rev. D 57 (1997) 1350",
+        "experiment": "CLEO",
+        "doi": "https://doi.org/10.1103/PhysRevD.57.1350",
+        "comment": "",
+        "code": "Ammar 98"
+    },
+    "data": [
+        {
+            "E": 10.52,
+            "dEp": 0.0,
+            "dEn": 0.0,
+            "R": 3.56,
+            "dRp": 0.058,
+            "dRn": 0.058,
+            "statp": 0.01,
+            "statn": 0.01,
+            "systp": [
+                0.0
+            ],
+            "systn": [
+                0.0
+            ],
+            "corrp": [
+                0.0572
+            ],
+            "corrn": [
+                0.0572
+            ]
+        }
+    ]
+}

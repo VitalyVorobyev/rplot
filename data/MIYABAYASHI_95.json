@@ -1,0 +1,34 @@
+{
+    "meta": {
+        "year": 1995,
+        "ref": "Phys. Lett. B 347 (1995) 171",
+        "experiment": "TOPAZ",
+        "doi": "https://doi.org/10.1016/0370-2693(95)00038-M",
+        "comment": "",
+        "code": "Miyabayashi 90"
+    },
+    "data": [
+        {
+            "E": 57.77,
+            "dEp": 0.0,
+            "dEn": 0.0,
+            "R": 4.89,
+            "dRp": 0.1595,
+            "dRn": 0.1595,
+            "statp": 0.05,
+            "statn": 0.05,
+            "systp": [
+                0.0
+            ],
+            "systn": [
+                0.0
+            ],
+            "corrp": [
+                0.1515
+            ],
+            "corrn": [
+                0.1515
+            ]
+        }
+    ]
+}

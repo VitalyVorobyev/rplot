@@ -30,7 +30,7 @@ def parse_item(line):
     item = list(map(float, syst_item[0][:-1]))
     return ('syst', item)
 
-def dat_to_json(fname='rpp2018-hadronicrpp_page1001.dat', lo=2., hi=7.,
+def dat_to_df(fname='data/rpp2018-hadronicrpp_page1001.dat', lo=2., hi=7.,
          exclude=[]):
     with open(fname, 'r') as ifile:
         data = []
@@ -59,4 +59,4 @@ def dat_to_json(fname='rpp2018-hadronicrpp_page1001.dat', lo=2., hi=7.,
     return df
 
 if __name__ == '__main__':
-    dat_to_json()
+    dat_to_df()

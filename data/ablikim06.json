@@ -1,10 +1,12 @@
 {
-    "code": "Ablikim 06",
-    "ref": "Phys. Rev. Lett. 97 (2006) 262001",
-    "doi": "https://doi.org/10.1103/PhysRevLett.97.262001",
-    "experiment": "BES",
-    "year": 2006,
-    "comment": "",
+    "meta": {
+        "code": "Ablikim 06",
+        "ref": "Phys. Rev. Lett. 97 (2006) 262001",
+        "doi": "https://doi.org/10.1103/PhysRevLett.97.262001",
+        "experiment": "BES",
+        "year": 2006,
+        "comment": ""
+    },
     "data": [
         {
             "E": 3.65,

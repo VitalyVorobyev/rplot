@@ -1,10 +1,12 @@
 {
-    "code": "Ablikim 09",
-    "ref": "Phys. Lett. B 677 (2009) 239",
-    "doi": "https://doi.org/10.1016/j.physletb.2009.05.055",
-    "experiment": "BES",
-    "year": 2009,
-    "comment": "",
+    "meta": {
+        "code": "Ablikim 09",
+        "ref": "Phys. Lett. B 677 (2009) 239",
+        "doi": "https://doi.org/10.1016/j.physletb.2009.05.055",
+        "experiment": "BES",
+        "year": 2009,
+        "comment": ""
+    },
     "data": [
         {
             "E": 2.6,

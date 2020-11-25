@@ -6,31 +6,19 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.rcParams.update({'font.size': 16})
 
-from readpdg import dat_to_json
 from rpredict import rew_v, rewqcd_v
 from datafilter import rfilter
+from loaddata import measurements_in_range
+from tauxsec import tau_xsec, MTAU
 
-TAUMASS = 1.77682
-
-def tau_xsec(sqrts):
-    mask = sqrts < 2*TAUMASS
-    gamma = 0.5 * sqrts / TAUMASS
-    gamma[mask] = 1
-    beta = np.sqrt(1. - 1./gamma**2)
-    coef = 86.8  # nb (4 * pi * alpha**2 / 3)
-    return 0.5 * coef * beta * (3 - beta**2) / sqrts**2
-
-def rplot(df, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
+def rplot(data, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
     fig, ax1 = plt.subplots(figsize=(18, 8))
-    for key, data in df.groupby('code'):
-        print(key, data.shape)
-        df = rfilter(data, deltaE, deltaSigma)
+    for meta, df in data:
+        df = rfilter(df, deltaE, deltaSigma)
         ax1.errorbar(
-            x=df.Ecm, y=df.R,
-            xerr=(df.Ecm - df.EcmLo, df.EcmHi - df.Ecm),
-            yerr=(df.errn, df.errp),
-            linestyle='none', label=key,
-            markersize=5, marker='o')
+            x=df.E, y=df.R, xerr=(df.dEn, df.dEp), yerr=(df.dRn, df.dRp),
+            linestyle='none', markersize=5, marker='o',
+            label=f'{meta.experiment} {meta.year%10:02d}')
 
     sqrts = np.concatenate([
         np.linspace(lo, 3.77 - 1.e-5, 20),
@@ -49,7 +37,7 @@ def rplot(df, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
     ax1.legend(fontsize=14)
 
     ax2 = ax1.twinx()
-    sqrts = np.linspace(2*TAUMASS, 7, 1000)
+    sqrts = np.linspace(2*MTAU, 7, 1000)
     taux = tau_xsec(sqrts)
     ax2.plot(sqrts, taux, label=r'$\sigma(e^+e^-\to\tau^+\tau^-)$')
     ax2.set_ylim((0, 10.5))
@@ -64,8 +52,8 @@ def rplot(df, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
     plt.show()
 
 def main():
-    df = dat_to_json()
-    rplot(df, deltaE=0.02, deltaSigma=2)
+    lo, hi = 2, 7
+    rplot(measurements_in_range(lo, hi), lo=2, hi=7, deltaE=0.02, deltaSigma=2)
 
 if __name__ == '__main__':
     main()
