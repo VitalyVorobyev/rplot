@@ -24,7 +24,7 @@ def measurements_in_range(lo, hi):
         if df.size:
             print(f'{meta.experiment:>16s} {meta.year % 100:02d}: {df.shape[0]:2d} points')
             meas.append([meta, df])
-    return meas
+    return sorted(meas, key=lambda x: -x[0].year)
 
 def main():
     measurements_in_range(2, 7)
