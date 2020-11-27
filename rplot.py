@@ -1,11 +1,15 @@
 #! /usr/bin/env python
 
+from operator import le
+import os
+import itertools
 import re
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.rcParams.update({'font.size': 16})
-# import mpld3
+import mpld3
 
 from rpredict import rew_v, rewqcd_v
 from datafilter import rfilter
@@ -16,10 +20,10 @@ def static_js_url():
     return '/static/sct/js'
 
 def d3url():
-    return '/'.join([static_js_url(), 'd3.v5.min.js'])
+    return os.path.join(static_js_url(), 'd3.v5.min.js')
 
 def mpld3url():
-    return '/'.join([static_js_url(), 'mpld3.v0.5.1.min.js'])
+    return os.path.join(static_js_url(), 'mpld3.v0.5.1.min.js')
 
 
 def rbw(x, m, w):
@@ -28,65 +32,117 @@ def rbw(x, m, w):
     """
     return 
 
+COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+          '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
 
-def rplot(data, lo=2, hi=7, deltaE=0.01, deltaSigma=2):
-    fig, ax1 = plt.subplots(figsize=(18, 8))
-    for meta, df in data:
-        df = rfilter(df, deltaE, deltaSigma)
-        ax1.errorbar(
-            x=df.E, y=df.R, xerr=(df.dEn, df.dEp), yerr=(df.dRn, df.dRp),
-            linestyle='none', markersize=5, marker='o',
-            label=f'{meta.experiment} {meta.year%100:02d}')
+def get_color():
+    for col in itertools.cycle(COLORS):
+        yield col
 
-    sqrts = np.concatenate([
-        np.linspace(lo, 3.77 - 1.e-5, 20),
-        np.linspace(3.77 + 1.e-5, hi, 20)
-    ])
-    ax1.plot(sqrts, rew_v(sqrts**2), '--', color='k', label='EW prediction')
-    ax1.plot(sqrts, rewqcd_v(sqrts**2), color='k', label='EW + pQCD prediction')
-
-    ax1.set_ylim((0, 5.25))
-    ax1.set_xlim((lo, hi))
-    ax1.set_xlabel(r'$\sqrt{s}$ (GeV)', fontsize=20)
-    ax1.set_ylabel('R', fontsize=20)
-    ax1.minorticks_on()
-    ax1.grid(which='major')
-    ax1.grid(which='minor', linestyle=':')
-    ax1.legend(fontsize=14)
-
-    ax2 = ax1.twinx()
+def plot_tau_xsec(ax, ylim=(0, 10.5)):
     sqrts = np.concatenate([
         np.linspace(2*MTAU, 2*MTAU+0.3, 150),
         np.linspace(2*MTAU+0.3, 7, 50)
     ])
     taux = tau_xsec(sqrts)
-    ax2.plot(sqrts, taux, label=r'$\sigma(e^+e^-\to\tau^+\tau^-)$')
-    ax2.set_ylim((0, 10.5))
-    ax2.set_ylabel(r'$\sigma$ (nb)', fontsize=20)
-    ax2.legend()
+    ax.plot(sqrts, taux, label=r'$\sigma(e^+e^-\to\tau^+\tau^-)$')
+    ax.set_ylim(ylim)
+    ax.set_ylabel(r'$\sigma$ (nb)', fontsize=20)
+    ax.legend(fontsize=14)
+
+def plot_rdata(ax, data, deltaE=0.01, deltaSigma=2, msize=5, keycol={}):
+    colgen = get_color()
+    for meta, df in data:
+        df = rfilter(df, deltaE, deltaSigma)
+        color = keycol.get(meta.code, next(colgen))
+        keycol[meta.code] = color
+        ax.errorbar(
+            x=df.E, y=df.R, xerr=(df.dEn, df.dEp), yerr=(df.dRn, df.dRp),
+            linestyle='none', markersize=5, marker='o',
+            label=f'{meta.experiment} {meta.year%100:02d}', color=color)
+    return keycol
+
+def add_ticks(ax):
+    ax.minorticks_on()
+    ax.grid(which='major')
+    ax.grid(which='minor', linestyle=':')
+
+def rplot(ax, data, lo=2, hi=7, deltaE=0.01, deltaSigma=2,
+          legend=True, legendsize=14, lblsize=20, predictions=True,
+          xlbl=r'$\sqrt{s}$ (GeV)', msize=5):
+    keycol = plot_rdata(ax, data, deltaE, deltaSigma, msize=5)
+    sqrts = np.concatenate([
+        np.linspace(lo, 3.77 - 1.e-5, 10),
+        np.linspace(3.77 + 1.e-5, hi, 10)
+    ])
+    if predictions:
+        ax.plot(sqrts, rew_v(sqrts**2), '--', color='k', label='EW prediction')
+        ax.plot(sqrts, rewqcd_v(sqrts**2), color='k', label='EW + pQCD prediction')
+
+    ax.set_ylim((0, 5.25))
+    ax.set_xlim((lo, hi))
+    ax.set_xlabel(xlbl, fontsize=lblsize)
+    ax.set_ylabel('R', fontsize=lblsize)
+    add_ticks(ax)
+    if legend:
+        ax.legend(fontsize=legendsize)
+    
+    return keycol
+
+def simple_plot(lo=2, hi=7, deltaE=0.01, deltaSigma=2):
+    fig, ax = plt.subplots(figsize=(18, 8))
+    fil = lambda meta, df: df if meta.year > 1989 else pd.DataFrame([])
+    data = measurements_in_range(lo, hi, fil)
+
+    keycol = rplot(ax, data, lo, hi, deltaE, deltaSigma)
+    plot_tau_xsec(ax.twinx())
+
+    ax0 = plt.axes([.59, .25, .33, .30])
+    data0 = measurements_in_range(3.6, 4, fil)
+    plot_rdata(ax0, data0, deltaE, deltaSigma, keycol=keycol)
+    add_ticks(ax0)
 
     fig.tight_layout()
-
     for ext in ['pdf', 'png', 'svg']:
         plt.savefig(f'plots/rplot.{ext}')
+    plt.show()
 
-    # handles, labels = ax1.get_legend_handles_labels() # return lines and labels
-    # interactive_legend = mpld3.plugins.InteractiveLegendPlugin(
-    #     zip(handles, ax1.collections), labels, alpha_unsel=0.5, alpha_over=1.5, start_visible=True)
-    # mpld3.plugins.connect(fig, interactive_legend)
+def interactive_r(lo=2, hi=7, deltaE=0.01, deltaSigma=2, opath='plots/rplotd3.html'):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    data = measurements_in_range(lo, hi)
+    rplot(ax, data, lo, hi, deltaE, deltaSigma, legendsize=14,
+          xlbl='Energy (GeV)', lblsize=20, msize=3)
+    fig.tight_layout()
 
-    # html = mpld3.fig_to_html(fig, figid='rplot', d3_url=d3url(), mpld3_url=mpld3url())
-    # html = re.sub(r'(\d+\.\d{4})\d+', r'\1', html)
-    # html = re.sub(r'el\d+(\d{5})', 'el' + r'\1', html)
+    html = mpld3.fig_to_html(fig, figid='rplot', d3_url=d3url(), mpld3_url=mpld3url())
+    html = re.sub(r'(\d+\.\d{4})\d+', r'\1', html)
+    html = re.sub(r'el\d+(\d{5})', 'el' + r'\1', html)
+    
+    with open(opath, 'w') as ofile:
+        ofile.write(html)
 
-    # with open('plots/rplot.html', 'w') as ofile:
-        # ofile.write(html)
+    for ext in ['pdf', 'png', 'svg']:
+        plt.savefig(f'plots/rplotd3.{ext}')
 
     plt.show()
 
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                        help='an integer for the accumulator')
+    parser.add_argument('--sum', dest='accumulate', action='store_const',
+                        const=sum, default=max,
+                        help='sum the integers (default: find the max)')
+
+    args = parser.parse_args()
+    print(args.accumulate(args.integers))
+
     lo, hi = 2, 7
-    rplot(measurements_in_range(lo, hi), lo=lo, hi=hi, deltaE=0.02, deltaSigma=2)
+    simple_plot(lo=lo, hi=hi, deltaE=0.02, deltaSigma=2)
 
 if __name__ == '__main__':
-    main()
+    # main()
+    simple_plot()
+    # interactive_r()
