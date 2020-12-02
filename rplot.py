@@ -15,6 +15,7 @@ from rpredict import rew_v, rewqcd_v
 from datafilter import rfilter
 from loaddata import measurements_in_range
 from tauxsec import tau_xsec, MTAU
+from colors import kelly_gen
 
 def static_js_url():
     return '/static/sct/js'
@@ -32,13 +33,6 @@ def rbw(x, m, w):
     """
     return 
 
-COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-          '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
-
-def get_color():
-    for col in itertools.cycle(COLORS):
-        yield col
-
 def plot_tau_xsec(ax, ylim=(0, 10.5)):
     sqrts = np.concatenate([
         np.linspace(2*MTAU, 2*MTAU+0.3, 150),
@@ -51,7 +45,7 @@ def plot_tau_xsec(ax, ylim=(0, 10.5)):
     ax.legend(fontsize=14)
 
 def plot_rdata(ax, data, deltaE=0.01, deltaSigma=2, msize=5, keycol={}):
-    colgen = get_color()
+    colgen = kelly_gen()
     for meta, df in data:
         df = rfilter(df, deltaE, deltaSigma)
         color = keycol.get(meta.code, next(colgen))
@@ -76,8 +70,8 @@ def rplot(ax, data, lo=2, hi=7, deltaE=0.01, deltaSigma=2,
         np.linspace(3.77 + 1.e-5, hi, 10)
     ])
     if predictions:
-        ax.plot(sqrts, rew_v(sqrts**2), '--', color='k', label='EW prediction')
-        ax.plot(sqrts, rewqcd_v(sqrts**2), color='k', label='EW + pQCD prediction')
+        ax.plot(sqrts, rew_v(sqrts**2), '--', color='k', label='Naive model')
+        ax.plot(sqrts, rewqcd_v(sqrts**2), color='k', label='3-loop pQCD')
 
     ax.set_ylim((0, 5.25))
     ax.set_xlim((lo, hi))
