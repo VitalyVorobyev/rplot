@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
-x0 =  78.24
-x1 = 389.70
+x0 =  58.7
+x1 = 292.2
 delta = x1 - x0
 
 baryons = [
@@ -13,7 +13,8 @@ baryons = [
     ['omega_minus', 1.67245   , 'sss'],
     ['lambda_c_minus', 2.28646, 'udc'],
     ['xi_c_plus', 2.46794     , 'usc'],
-    ['xi_c_zero', 2.46794     , 'usc'],
+    ['xi_c_zero', 2.47090     , 'dsc'],
+    ['omega_c_zero', 2.6852   , 'ssc'],
 ]
 
 print('baryons:')
@@ -21,7 +22,6 @@ for name, mass, quarks in baryons:
     print(f'{name:>15s} ({quarks}): {2*mass:.3f}: {x0 + delta * (2*mass - 2):.2f}')
 
 charmonium = [
-    ['test', 2.232, 92.9e-6],
     ['jpsi', 3.096, 92.9e-6],
     ['psi2s', 3.68610, 294e-6],
     ['psi3770', 3.7737, 0.0272],
@@ -33,3 +33,6 @@ charmonium = [
 print('ccbar:')
 for name, mass, width in charmonium:
     print(f'{name:>15s}: {mass:.3f}: {x0 + delta * (mass - 2):.2f}')
+
+
+print(f'tau: {2*1.77682:.3f}: {x0 + delta * (2*1.77682 - 2):.2f}')
